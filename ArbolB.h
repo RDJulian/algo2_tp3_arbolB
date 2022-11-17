@@ -1,16 +1,41 @@
+#ifndef ARBOL_H
+#define ARBOL_H
+
 #include "nodoArbolB.h"
 
-class ArbolB {
+// TODO: Declarar apropiadamente.
+
+template <typename Tipo, bool esMenor(Tipo, Tipo)> class ArbolB {
   private:
     int orden;
-    NodoArbolB* raiz;
+    NodoArbolB<Tipo, esMenor>* raiz;
 
   public:
-    ArbolB(int orden);
+    ArbolB(int orden) {
+        this->orden = orden;
+        this->raiz = new NodoArbolB<Tipo, esMenor>(this->orden, true);
+    }
 
-    void insertar(int dato);
+    void insertar(Tipo dato) {
+        NodoArbolB<Tipo, esMenor>* nuevoNodo = nullptr;
+        Tipo valorAPasar;
 
-    void recorrer();
+        this->raiz->insertar(dato, valorAPasar, nuevoNodo);
 
-    ~ArbolB();
+        if (nuevoNodo != nullptr) {
+            this->raiz = this->raiz->nuevaRaiz(valorAPasar, nuevoNodo);
+        }
+    }
+
+    void ejecutar(void funcion(Tipo)) { this->raiz->ejecutar(funcion); }
+
+    // Ambos metodos recorren inorden, por lo tanto en pantalla quedan
+    // ordenados.
+    void recorrer() { this->raiz->recorrer(0); }
+
+    void listar() { this->raiz->recorrer(); }
+
+    ~ArbolB() { delete this->raiz; }
 };
+
+#endif
